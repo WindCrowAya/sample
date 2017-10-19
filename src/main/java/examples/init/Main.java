@@ -1,4 +1,4 @@
-package any_examples;
+package examples.init;
 
 public class Main {
     String variable;
@@ -12,7 +12,7 @@ public class Main {
     }
 
     protected void printVariable(){
-        variable = "variable is initialized in any_examples.Main Class";
+        variable = "variable is initialized in examples.init.Main Class";
     }
 }
 

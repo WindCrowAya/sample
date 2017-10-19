@@ -1,4 +1,4 @@
-package any_examples;
+package examples.init;
 
 public class B extends Main {
     String variable = null;
@@ -11,7 +11,7 @@ public class B extends Main {
     }
 
     protected void printVariable(){
-        variable = "variable is initialized in any_examples.B Class";
+        variable = "variable is initialized in examples.init.B Class";
     }
 
     public void x(String s) {

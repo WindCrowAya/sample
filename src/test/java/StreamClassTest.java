@@ -1,3 +1,4 @@
+import my_examples.StreamClass;
 import org.junit.*;
 
 import java.util.ArrayList;
@@ -11,12 +12,12 @@ public class StreamClassTest {
 
     @BeforeClass
     public static void beforeClass() {
-        System.out.println("Before StreamClass.class");
+        System.out.println("Before my_examples.StreamClass.class");
     }
 
     @AfterClass
     public static void afterClass() {
-        System.out.println("After StreamClass.class");
+        System.out.println("After my_examples.StreamClass.class");
     }
 
     @Before

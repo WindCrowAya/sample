@@ -1,3 +1,5 @@
+package my_examples;
+
 import java.util.*;
 import java.util.stream.Collectors;
 

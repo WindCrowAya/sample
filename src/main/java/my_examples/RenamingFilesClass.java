@@ -1,3 +1,5 @@
+package my_examples;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -7,15 +9,15 @@ import java.nio.file.Paths;
 /**
  * Renaming files in specified folder
  */
-public class RenamingFilesClass { // TODO: 17.10.2017 сделать так, чтобы в случае ошибочного пути создавался повторный ввод другого пути
+public class RenamingFilesClass {
 
     public static void renameFiles() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         boolean pathIsEmpty, listFilesIsEmpty = true;
         String path;
-        File folder = null;             //костыль?
-        File[] listFiles = new File[0]; //костыль?
+        File folder = null;
+        File[] listFiles = new File[0];
         File resultFile;
         String fileToString, resultString;
 
@@ -37,7 +39,6 @@ public class RenamingFilesClass { // TODO: 17.10.2017 сделать так, ч�
 
         for (int i = 0; i < listFiles.length; i++) {
             fileToString = listFiles[i].toString();
-//            index = fileToString.lastIndexOf(".");
             resultString = folder.toString() + "\\" + i + fileToString.substring(fileToString.lastIndexOf("."));
             resultFile = Paths.get(resultString).toFile();
             listFiles[i].renameTo(resultFile);
