@@ -12,7 +12,7 @@ public class Main {
     }
 
     protected void printVariable(){
-        variable = "variable is initialized in examples.init.Main Class";
+        variable = "variable is initialized in examples.init2.Main Class";
     }
 }
 
