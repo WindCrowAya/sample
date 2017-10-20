@@ -37,6 +37,19 @@ function fib(n) {
     }
 }
 console.log(arrFib);
-var hui = document.getElementById("javaLinked");
+
+var testHover = document.getElementById("test");
+var p = document.createElement("p");
 var text = document.createTextNode("huiiiii");
-// hui.appendChild();
+p.appendChild(text);
+
+function hover() {
+    testHover.appendChild(p);
+    p.style.display = "initial";
+}
+//removeChild
+function out() {
+    //testHover.removeChild(p);
+    p.style.display = "none";
+}
+

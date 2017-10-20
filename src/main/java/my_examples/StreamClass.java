@@ -4,12 +4,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * This class have some methods with using Stream API
+ * This class have some methods with using Stream API.
  */
 public class StreamClass {
 
     /**
-     * Searches for the max number in the array
+     * Searches for the max number in the array.
      * @param a is int[]
      * @throws IllegalArgumentException if {@code a.length == 0}
      * @throws NullPointerException if {@code a} is null
@@ -22,7 +22,7 @@ public class StreamClass {
     }
 
     /**
-     * Searches for the max string (or strings) in list
+     * Searches for the max string (or strings) in list.
      * @param list is List<String>
      * @throws IllegalArgumentException if {@code list.size() == 0}
      * @throws NullPointerException if {@code list} is null
@@ -45,7 +45,7 @@ public class StreamClass {
 
     /**
      * The same as {@code searchMaxWordsByLength(List<String> list)} //правильно ли так писать названия методов?
-     * but in one return
+     * but in one return.
      */
     public List<String> searchMaxWordsByLengthV2(List<String> list) { // TODO: 14.10.2017 разобраться в работе данного метода
         if (list.size() == 0)
