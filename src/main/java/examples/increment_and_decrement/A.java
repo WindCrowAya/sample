@@ -4,7 +4,7 @@ public class A {
     static int a = 1111;
     static
     {
-//        a = a-- - --a;
+        a = a-- - --a;
     }
 
     {
