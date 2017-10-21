@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * Renaming files in specified folder.
@@ -12,10 +14,11 @@ import java.nio.file.Paths;
  *
  * Useful links:
  *   System.arraycopy() : http://javadevblog.com/kak-skopirovat-massiv-v-java.html
+ *   Arrays.copyOf() : https://stackoverflow.com/questions/1018750/how-to-convert-object-array-to-string-array-in-java
  */
 public class RenamingFilesClass {
 
-    public static void renameFiles() throws IOException {
+    private static void renameFiles() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         //читаемость кода стала лучше? или лучше выровнять все ссылки?
@@ -32,8 +35,12 @@ public class RenamingFilesClass {
                fileToString,
                resultString;
 
-        String[] pathAndExtensions,
+        String[] pathAndExtensions = null,
                  extensions = null;
+
+        int countDirectories = 0,
+            countFilesWithCurrentExtension,
+            countFilesWithAnyExtension = 0;
 
         System.out.print(
                 "Переименование файлов в папке.\n" +
@@ -49,7 +56,7 @@ public class RenamingFilesClass {
                 continue;
             }
 
-            pathAndExtensions = input.trim().split(" ");
+            pathAndExtensions = removeDuplicates(input.trim().split(" "));
 
             folder = new File(pathAndExtensions[0]);
             listFiles = folder.listFiles();
@@ -60,45 +67,54 @@ public class RenamingFilesClass {
                 continue;
             }
 
-            extensions = new String[pathAndExtensions.length];
-            extensions[0] = " ";
-            System.arraycopy(pathAndExtensions, 1, extensions, 1, pathAndExtensions.length - 1);
+            extensions = new String[pathAndExtensions.length - 1];
+            System.arraycopy(pathAndExtensions, 1, extensions, 0, pathAndExtensions.length - 1);
 
         } while (inputIsEmpty || listFilesIsEmpty);
 
-        int countDirectories = 0;
-        for (String extension: extensions) {
-            int countFilesWithCurrentExtension = 0;
-            for (int i = 0; i < listFiles.length; i++) {
-                fileToString = listFiles[i].toString();
-                if (!listFiles[i].isDirectory()) {
-                    currentExtension = fileToString.substring(fileToString.lastIndexOf(".") + 1);
-                    if (currentExtension.equals(extension)) {
-                        resultString = folder.toString() + "\\" + ++countFilesWithCurrentExtension + "." + currentExtension;
-                        resultFile = Paths.get(resultString).toFile();
-                        listFiles[i].renameTo(resultFile);
-                    }
-                } else {
-                    resultString = folder.toString() + "\\" + ++countDirectories;
-                    resultFile = Paths.get(resultString).toFile();
-                    listFiles[i].renameTo(resultFile);
-                }
-            }
-        }
 
-        //проверка на папки
-        /*for (String extension: extensions) {
-            for (int i = 0; i < listFiles.length; i++) {
-                if (extension.equals("folders")) {
-                    resultString = folder.toString() + "\\" + ++countDirectories;
-                    resultFile = Paths.get(resultString).toFile();
-                    listFiles[i].renameTo(resultFile);
-                } else
+        for (String extension: extensions) {
+            countFilesWithCurrentExtension = 0;
+            switch (extension) {
+                case "folders":
+                    for (File currentFile : listFiles) {
+                        if (currentFile.isDirectory()) {
+                            resultString = folder.toString() + "\\" + ++countDirectories;
+                            resultFile = Paths.get(resultString).toFile();
+                            currentFile.renameTo(resultFile);
+                        }
+                    }
+                    break;
+                case "all":
+                    for (File currentFile : listFiles) {
+                        fileToString = currentFile.toString();
+                        currentExtension = fileToString.substring(fileToString.lastIndexOf(".") + 1);
+                        resultString = folder.toString() + "\\" + ++countFilesWithAnyExtension + "." + currentExtension;
+                        resultFile = Paths.get(resultString).toFile();
+                        currentFile.renameTo(resultFile);
+                    }
+                    break;
+                default:
+                    for (File currentFile : listFiles) {
+                        fileToString = currentFile.toString();
+                        currentExtension = fileToString.substring(fileToString.lastIndexOf(".") + 1);
+                        if (currentExtension.equals(extension)) {
+                            resultString = folder.toString() + "\\" + ++countFilesWithCurrentExtension + "." + currentExtension;
+                            resultFile = Paths.get(resultString).toFile();
+                            currentFile.renameTo(resultFile);
+                        }
+                    }
                     break;
             }
-        }*/
+
+        }
 
         System.out.println("Переименование завершено.");
+    }
+
+    private static String[] removeDuplicates(String[] s) {
+        Object[] o = Arrays.stream(s).distinct().toArray();
+        return Arrays.copyOf(o, o.length, String[].class);
     }
 
     /*public File convertFileToString(String s, int i) {
