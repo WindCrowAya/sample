@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 /**
  * Renaming files in specified folder.
@@ -35,7 +34,7 @@ public class RenamingFilesClass {
                fileToString,
                resultString;
 
-        String[] pathAndExtensions,
+        String[] pathAndExtensions = new String[0],
                  extensions = null;
 
         int countDirectories = 0,
@@ -43,9 +42,14 @@ public class RenamingFilesClass {
             countFilesWithCurrentExtension;
 
         System.out.print(
-                "Переименование файлов в папке.\n" +
-                "Сначала вводите путь к папке, затем ставите пробел и прописываете нужные расширения,\n" +
-                "разделяя их пробелами.\n" +
+                "+--------------------------------+\n" +
+                "| Переименование файлов в папке. |\n" +
+                "+--------------------------------+\n\n" +
+                "Вводите путь к папке, затем ставьте пробел и прописывайте нужные расширения, разделяя их пробелами.\n" +
+                "Также имеются специальные команды, которые прописываются до расширений.\n\n" +
+                "Специальные команды:\n" +
+                "->     all : переименование всех файлов подряд и отдельно папок\n" +
+                "-> folders : переименование папок\n\n\n" +
                 "Ввод команды: ");
         do {
             input = reader.readLine();
@@ -67,10 +71,15 @@ public class RenamingFilesClass {
                 continue;
             }
 
+            if (pathAndExtensions.length - 1 <= 0) {
+                System.out.print("Не заданы расширения или специальные команды. Повторите ввод: ");
+                continue;
+            }
+
             extensions = new String[pathAndExtensions.length - 1];
             System.arraycopy(pathAndExtensions, 1, extensions, 0, pathAndExtensions.length - 1);
 
-        } while (inputIsEmpty || listFilesIsEmpty);
+        } while (inputIsEmpty || listFilesIsEmpty || pathAndExtensions.length - 1 <= 0);
 
 
         for (String extension: extensions) {
@@ -123,10 +132,6 @@ public class RenamingFilesClass {
         Object[] o = Arrays.stream(s).distinct().toArray();
         return Arrays.copyOf(o, o.length, String[].class);
     }
-
-    /*public File convertFileToString(String s, int i) {
-        return Paths.get(s).toFile();
-    }*/
 
     public static void main(String[] args) {
         try {
