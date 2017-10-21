@@ -35,12 +35,12 @@ public class RenamingFilesClass {
                fileToString,
                resultString;
 
-        String[] pathAndExtensions = null,
+        String[] pathAndExtensions,
                  extensions = null;
 
         int countDirectories = 0,
-            countFilesWithCurrentExtension,
-            countFilesWithAnyExtension = 0;
+            countFilesWithAnyExtension,
+            countFilesWithCurrentExtension;
 
         System.out.print(
                 "Переименование файлов в папке.\n" +
@@ -75,6 +75,7 @@ public class RenamingFilesClass {
 
         for (String extension: extensions) {
             countFilesWithCurrentExtension = 0;
+            countFilesWithAnyExtension = 0;
             switch (extension) {
                 case "folders":
                     for (File currentFile : listFiles) {
@@ -87,6 +88,12 @@ public class RenamingFilesClass {
                     break;
                 case "all":
                     for (File currentFile : listFiles) {
+                        if (currentFile.isDirectory()) {
+                            resultString = folder.toString() + "\\" + ++countDirectories;
+                            resultFile = Paths.get(resultString).toFile();
+                            currentFile.renameTo(resultFile);
+                            continue;
+                        }
                         fileToString = currentFile.toString();
                         currentExtension = fileToString.substring(fileToString.lastIndexOf(".") + 1);
                         resultString = folder.toString() + "\\" + ++countFilesWithAnyExtension + "." + currentExtension;
