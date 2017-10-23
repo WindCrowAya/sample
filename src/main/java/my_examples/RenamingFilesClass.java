@@ -20,22 +20,27 @@ public class RenamingFilesClass {
     private static void renameFiles() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        //читаемость кода стала лучше? или лучше выровнять все ссылки?
-        boolean inputIsEmpty,
-                listFilesIsEmpty = true;
+        boolean pathIsEmpty,
+                commandIsEmpty = true,
+                stringOfExtensionsIsEmpty = true,
+                listFilesIsEmpty = true,
+                noneIsEnabled = false,
+                allIsEnabled  = false,
+                addIsEnabled  = false;
 
         File folder = null,
              resultFile;
 
         File[] listFiles = new File[0];
 
-        String input,
+        String path,
+               command,
+               stringOfExtensions,
                currentExtension,
                fileToString,
                resultString;
 
-        String[] pathAndExtensions = new String[0],
-                 extensions = null;
+        String[] extensions = null;
 
         int countDirectories = 0,
             countFilesWithAnyExtension,
@@ -45,43 +50,71 @@ public class RenamingFilesClass {
                 "+--------------------------------+\n" +
                 "| Переименование файлов в папке. |\n" +
                 "+--------------------------------+\n\n" +
-                "Вводите путь к папке, затем ставьте пробел и прописывайте нужные расширения, разделяя их пробелами.\n" +
-                "Также имеются специальные команды, которые прописываются до расширений.\n\n" +
-                "Специальные команды:\n" +
-                "->     all : переименование всех файлов подряд и отдельно папок\n" +
-                "-> folders : переименование папок\n\n\n" +
-                "Ввод команды: ");
+                "Как работать с данной программой:\n" +
+                "1. Прописывайте путь к папке.\n" +
+                "2. Воспользуйтесь специальной командой:\n" +
+                "->  all : переименование всех файлов подряд и отдельно папок\n" +
+                "->  add : добавляет к названиям файлов порядковый номер\n" +
+                "-> none : преобразование по умолчанию, переименовывает по каждому " +
+                          "введенному расширению (вместо ввода этой команды можно нажать Enter)\n" +
+                "3. Прописывайте расширения через запятую, для переименования папок введите \"folders\"\n" +
+                "\n\n" +
+                "Введите путь: ");
         do {
-            input = reader.readLine();
+            path = reader.readLine().trim(); //сработают таким образом тримы?
 
-            inputIsEmpty = (input == null) || input.trim().equals("");
-            if (inputIsEmpty) {
-                System.out.print("Пустой запрос. Повторите ввод: ");
+            pathIsEmpty = isEmpty(path);
+            if (pathIsEmpty) {
+                System.out.print("Пустой запрос. Повторите ввод заново, начиная с пути: ");
                 continue;
             }
 
-            pathAndExtensions = removeDuplicates(input.trim().split(" "));
-
-            folder = new File(pathAndExtensions[0]);
+            folder = new File(path);
             listFiles = folder.listFiles();
 
             listFilesIsEmpty = (listFiles == null) || listFiles.length == 0;
             if (listFilesIsEmpty) {
-                System.out.print("Файлов в папке нет или такого пути не существует. Повторите ввод: ");
+                System.out.print("Файлов в папке нет или такого пути не существует. Повторите ввод заново, начиная с пути: ");
                 continue;
             }
 
-            if (pathAndExtensions.length - 1 <= 0) {
-                System.out.print("Не заданы расширения или специальные команды. Повторите ввод: ");
+
+            System.out.print("Введите команду: ");
+            command = reader.readLine().trim();
+
+            commandIsEmpty = isEmpty(command);
+            if (commandIsEmpty || command.equals("none")) {
+                noneIsEnabled = true;
+            } else if (command.equals("all")) {
+                allIsEnabled = true;// TODO: 24.10.2017 почему-то цикл повторяется
+            } else if (command.equals("add")) {
+                addIsEnabled = true;
+            } else {
+                System.out.print("Некорректная команда. Повторите ввод заново, начиная с пути: ");
                 continue;
             }
 
-            extensions = new String[pathAndExtensions.length - 1];
-            System.arraycopy(pathAndExtensions, 1, extensions, 0, pathAndExtensions.length - 1);
 
-        } while (inputIsEmpty || listFilesIsEmpty || pathAndExtensions.length - 1 <= 0);
+            if (!allIsEnabled) {
+                System.out.print("Введите расширения: ");
+                stringOfExtensions = reader.readLine().trim();
 
+                stringOfExtensionsIsEmpty = isEmpty(stringOfExtensions);
+                if (stringOfExtensionsIsEmpty) {
+                    System.out.print("Пустой запрос. Повторите ввод заново, начиная с пути: ");
+                    continue;
+                }
 
+                extensions = removeDuplicates(stringOfExtensions.split(","));
+
+                if (extensions.length < 1) {
+                    System.out.print("Не введены расширения. Повторите ввод заново, начиная с пути: ");
+                }
+            }
+
+        } while (pathIsEmpty || listFilesIsEmpty || commandIsEmpty || stringOfExtensionsIsEmpty || extensions.length < 1);
+
+// TODO: 24.10.2017 изменить алгоритм цикла(или метода)
         for (String extension: extensions) {
             countFilesWithCurrentExtension = 0;
             countFilesWithAnyExtension = 0;
@@ -131,6 +164,10 @@ public class RenamingFilesClass {
     private static String[] removeDuplicates(String[] s) {
         Object[] o = Arrays.stream(s).distinct().toArray();
         return Arrays.copyOf(o, o.length, String[].class);
+    }
+
+    private static boolean isEmpty(String s) {
+        return (s == null) || s.equals("");
     }
 
     public static void main(String[] args) {
