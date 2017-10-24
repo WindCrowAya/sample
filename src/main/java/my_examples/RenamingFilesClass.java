@@ -14,7 +14,6 @@ import java.util.List;
  * Use the console to work with this program.
  *
  * Useful links:
- *   System.arraycopy() : http://javadevblog.com/kak-skopirovat-massiv-v-java.html
  *   Arrays.copyOf() : https://stackoverflow.com/questions/1018750/how-to-convert-object-array-to-string-array-in-java
  */
 public class RenamingFilesClass {
@@ -26,10 +25,8 @@ public class RenamingFilesClass {
                 commandIsEmpty,
                 stringOfExtensionsIsEmpty = true,
                 listFilesIsEmpty = true,
-                noneIsEnabled = false,
                 allIsEnabled  = false,
-                eachIsEnabled = false,
-                addIsEnabled  = false;
+                eachIsEnabled = false;
 
         File folder = null,
              resultFile;
@@ -65,7 +62,7 @@ public class RenamingFilesClass {
                 "\n\n" +
                 "Введите путь: ");
         do {
-            path = reader.readLine().trim(); //сработают таким образом тримы?
+            path = reader.readLine().trim();
 
             pathIsEmpty = isEmpty(path);
             if (pathIsEmpty) {
@@ -86,15 +83,15 @@ public class RenamingFilesClass {
             System.out.print("Введите команду: ");
             command = reader.readLine().trim();
 
-            commandIsEmpty = isEmpty(command); // TODO: 24.10.2017 возможно потребуется изменить if-else из-за лишних переменных
-            if (commandIsEmpty || command.equals("none")) {
-                noneIsEnabled = true;
+            commandIsEmpty = isEmpty(command);
+            if (commandIsEmpty ||
+                command.equals("none") ||
+                command.equals("add")) {
+                //do nothing, because command is correct
             } else if (command.equals("all")) {
                 allIsEnabled = true;
             } else if (command.equals("each")) {
                 eachIsEnabled = true;
-            } else if (command.equals("add")) {
-                addIsEnabled = true;
             } else {
                 System.out.print("Некорректная команда. Повторите ввод заново, начиная с пути: ");
                 continue;
@@ -139,6 +136,7 @@ public class RenamingFilesClass {
                     file.renameTo(resultFile);
                 }
                 break;
+
             case "each": /*тесты пройдены*/
                 List<String> extensionsInDir = new ArrayList<>();
 
@@ -169,9 +167,34 @@ public class RenamingFilesClass {
                     }
                 }
                 break;
-            case "add":
 
+            case "add": /*тесты пройдены*/
+                for (String ex : extensions) {
+                    if (ex.equals("folders")) {
+                        for (File file : listFiles) {
+                            if (file.isDirectory()) {
+                                resultString = folder.toString() + "\\" + ++countDirectories + " " + file.getName();
+                                resultFile = Paths.get(resultString).toFile();
+                                file.renameTo(resultFile);
+                            }
+                        }
+                    } else {
+                        countFilesWithCurrentExtension = 0;
+                        for (File file : listFiles) {
+                            if (!file.isDirectory()) {
+                                fileToString = file.toString();
+                                currentExtension = fileToString.substring(fileToString.lastIndexOf(".") + 1);
+                                if (currentExtension.equals(ex)) {
+                                    resultString = folder.toString() + "\\" + ++countFilesWithCurrentExtension + " " + file.getName();
+                                    resultFile = Paths.get(resultString).toFile();
+                                    file.renameTo(resultFile);
+                                }
+                            }
+                        }
+                    }
+                }
                 break;
+
             default:  /*тесты пройдены*/
                 for (String ex : extensions) {
                     if (ex.equals("folders")) {
@@ -198,49 +221,6 @@ public class RenamingFilesClass {
                     }
                 }
         }
-
-        /*for (String extension: extensions) {
-            countFilesWithCurrentExtension = 0;
-            countFilesWithAnyExtension = 0;
-            switch (extension) {
-                case "folders":
-                    for (File currentFile : listFiles) {
-                        if (currentFile.isDirectory()) {
-                            resultString = folder.toString() + "\\" + ++countDirectories;
-                            resultFile = Paths.get(resultString).toFile();
-                            currentFile.renameTo(resultFile);
-                        }
-                    }
-                    break;
-                case "all":
-                    for (File currentFile : listFiles) {
-                        if (currentFile.isDirectory()) {
-                            resultString = folder.toString() + "\\" + ++countDirectories;
-                            resultFile = Paths.get(resultString).toFile();
-                            currentFile.renameTo(resultFile);
-                            continue;
-                        }
-                        fileToString = currentFile.toString();
-                        currentExtension = fileToString.substring(fileToString.lastIndexOf(".") + 1);
-                        resultString = folder.toString() + "\\" + ++countFilesWithAnyExtension + "." + currentExtension;
-                        resultFile = Paths.get(resultString).toFile();
-                        currentFile.renameTo(resultFile);
-                    }
-                    break;
-                default:
-                    for (File currentFile : listFiles) {
-                        fileToString = currentFile.toString();
-                        currentExtension = fileToString.substring(fileToString.lastIndexOf(".") + 1);
-                        if (currentExtension.equals(extension)) {
-                            resultString = folder.toString() + "\\" + ++countFilesWithCurrentExtension + "." + currentExtension;
-                            resultFile = Paths.get(resultString).toFile();
-                            currentFile.renameTo(resultFile);
-                        }
-                    }
-                    break;
-            }
-
-        }*/
 
         System.out.println("Переименование завершено.");
     }
